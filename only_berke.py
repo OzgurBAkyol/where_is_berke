@@ -2,11 +2,9 @@ import cv2
 import os
 import numpy as np
 
-# --- YÜZ TANIMA MODELİ (LBPH) ---
 recognizer = cv2.face.LBPHFaceRecognizer_create()
 face_cascade = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
 
-# --- BERKE'Yİ ÖĞRENME (face_data klasöründen) ---
 def get_images_and_labels(data_folder, user_id_prefix):
     face_samples = []
     ids = []
@@ -20,20 +18,17 @@ def get_images_and_labels(data_folder, user_id_prefix):
                 ids.append(1)  # Berke için ID = 1
     return face_samples, ids
 
-# --- KLASÖR VE ID TANIMI ---
 data_folder = 'face_data'
-user_id = 'berke'  # Tüm berke_*.jpg dosyaları kullanılacak
+user_id = 'berke'
 
-# --- VERİLERİ AL VE EĞİT ---
 faces, ids = get_images_and_labels(data_folder, user_id)
 if len(faces) == 0:
     print("❌ Hata: 'face_data' klasöründe 'berke' ile başlayan .jpg dosyası bulunamadı.")
     exit()
 
 recognizer.train(faces, np.array(ids))
-recognizer.save('trainer.yml')  # Model kaydı
+recognizer.save('trainer.yml')
 
-# --- MODELİ YÜKLE VE KAMERADAN TANIMA BAŞLAT ---
 recognizer.read('trainer.yml')
 webcam = cv2.VideoCapture(0)
 
@@ -63,7 +58,7 @@ while True:
         cv2.rectangle(img, (x, y), (x + w, y + h), color, 2)
 
     cv2.imshow("Berke'yi Tanıma", img)
-    if cv2.waitKey(10) == 27:  # ESC tuşu ile çık
+    if cv2.waitKey(10) == 27:
         break
 
 webcam.release()
